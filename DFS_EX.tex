@@ -1,0 +1,178 @@
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[english, boxed]{algorithm2e}
+\usepackage{algpseudocode}
+
+\pagenumbering{gobble}
+\textheight=9.5in
+\textwidth=6.5in
+\topmargin=-.8in
+\headsep=0pt
+\oddsidemargin=0truecm
+\evensidemargin=0truecm
+\footskip=0pt
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{problem}[theorem]{Problem}
+
+\begin{document}
+% Author's definitions
+\newcommand{\DEF}[1]{{\em #1\/}}
+
+\newcommand\chic{\chi_c}
+\newcommand\C{\hbox{${\cal C}$}}
+\newcommand{\RR}{\mbox{$\mathbb R$}}
+\newcommand{\NN}{\mbox{$\mathbb N$}}
+\newcommand{\ZZ}{\mbox{$\mathbb Z$}}
+\newcommand{\eopf}{\raisebox{0.8ex}{\framebox{}}}
+\newcommand{\dist}{\hbox{\rm d}}
+\renewcommand\a{\alpha}
+\renewcommand\b{\beta}
+\renewcommand\c{\gamma}
+\renewcommand\d{\delta}
+\newcommand\D{\Delta}
+\newcommand{\directedchi}{\mbox{$\vec{\chi}$}}
+\newcommand{\directedE}{\mbox{$\vec{E}$}}
+\newcommand{\directedG}{\mbox{$\vec{G}$}}
+\newcommand{\directedK}{\mbox{$\vec{K}$}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}
+	{\bf (a) Articulation + Bridge}\\
+	\underline{{\bf Function} DFS} $()$\\
+	clock = 1;\\
+	\ForEach{$v$ {\bf in} $V$}{
+		parent[$v$] = $null;$\\
+		visited[$v$] = $false;$\\
+		is\_articulate[$v$] = $false;$\\
+		child[$v$] = 0;\\
+		low[$v$] = 0;\\
+		pre[$v$] = 0;\\
+	}
+	
+	\ForEach{$(u,v)$ {\bf in} $E$}{
+		is\_bridge[$u$][$v$] = $false$;
+	}
+
+	\ForEach{$v$ {\bf in} $V$}{
+		\If{visited[$v$]==$false$}
+		{
+			explore($v$);\\
+			\If{child[$v$]$>$1}
+			{
+				is\_articulate[$v$] = $true;$\\
+			}
+		}
+	}
+
+	\hbox{}
+	\underline{{\bf Function} explore} $(z)$\;
+	pre[$z$] = low[$z$] = clock ++; \\
+	visited[$z$] = true; \\
+	\ForEach{$(z,w)$ {\bf in} $E$}{
+		\If{$w$==parent($z$)}
+		{continue;\\}
+		\eIf{visited[$w$]==false}{
+			child[$z$] ++; \\
+			parent[$w$] = $z$;\\
+			explore($w$);\\
+			low[$z$] = min(low[$z$], low[$w$]);\\
+			\If{low[$w$]$\ge$pre[$z$] {\bf and} parent[$z$]!=$null$}{
+				is\_articulate[$z$] = $true;$\\
+			}
+			\If{low[$w$]$>$pre[$z$]}{
+				is\_bridge[$z$][$w$] = $true;$\\
+			}
+		}
+		{
+			low[$z$]=min(low[$z$], pre[$w$]);\\
+		}
+	}
+\end{function}
+
+\begin{function}
+	{\bf (b) Articulation + Bridge + Biconnected components}\\
+	\underline{{\bf Function} DFS} $()$\\
+	clock = 1;\\
+	bcc\_count = 0; // counter for biconnected components \\
+
+	\ForEach{$v$ {\bf in} $V$}{
+		parent[$v$] = $null;$\\
+		visited[$v$] = $false;$\\
+		is\_articulate[$v$] = $false;$\\
+		child[$v$] = 0;\\
+		low[$v$] = 0;\\
+		pre[$v$] = 0;\\
+	}
+	
+	\ForEach{$(u,v)$ {\bf in} $E$}{
+		is\_bridge[$u$][$v$] = false;
+	}
+	
+	\ForEach{$v$ {\bf in} $V$}{
+		\If{visited[$v$]==$false$}
+		{
+			explore($v$);\\
+			\eIf{child[$v$]$>$1}
+			{
+				is\_articulate[$v$] = $true;$\\
+			}
+			{
+				bcc\_count ++;
+			}
+			\While{stack.empty()==$false$}{
+				edge = stack.top();\\
+				print(edge);\\
+				stack.pop();
+			}
+		}
+	}
+\end{function}
+\begin{function}
+	\underline{{\bf Function} explore} $(z)$;\\
+	pre[$z$] = low[$z$] = clock ++; \\
+	visited[$z$] = true \\
+	\ForEach{$(z,w)$ {\bf in} $E$}{
+		\If{$w$==parent($z$)}
+		{continue;\\}
+		\If{visited[$w$]==false}{
+			child[$z$] ++; \\
+			parent[$w$] = $z$;\\
+			stack.push(($z$,$w$));\\
+			explore($w$);\\
+			low[$z$] = min(low[$z$], low[$w$]);\\
+			\If{low[$w$]$\ge$pre[$z$] {\bf and} parent[$z$]!=$null$}{
+				is\_articulate[$z$] = $true;$\\
+				bcc\_count ++;\\
+				\While{true}{
+					edge = stack.top();\\
+					print(edge);\\
+					stack.pop();\\
+					\If{edge == $(z, w)$}
+					{
+						break;
+					}
+				}
+			}
+			\If{low[$w$]$>$pre[$z$]}{
+				is\_bridge[$z$][$w$] = $true;$\\
+			}
+		}
+		\ElseIf{pre[w]$<$pre[z]}{
+			stack.push(($z$,$w$));\\
+			low[$z$]=$min$(low[$z$], pre[$w$]);\\
+		}
+	}
+\end{function}
+\end{document}

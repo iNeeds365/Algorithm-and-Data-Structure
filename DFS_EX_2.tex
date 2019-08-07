@@ -1,0 +1,92 @@
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage[english, boxed]{algorithm2e}
+\usepackage{algpseudocode}
+
+\pagenumbering{gobble}
+\textheight=9.5in
+\textwidth=6.5in
+\topmargin=-.8in
+\headsep=0pt
+\oddsidemargin=0truecm
+\evensidemargin=0truecm
+\footskip=0pt
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{problem}[theorem]{Problem}
+
+\begin{document}
+% Author's definitions
+\newcommand{\DEF}[1]{{\em #1\/}}
+
+\newcommand\chic{\chi_c}
+\newcommand\C{\hbox{${\cal C}$}}
+\newcommand{\RR}{\mbox{$\mathbb R$}}
+\newcommand{\NN}{\mbox{$\mathbb N$}}
+\newcommand{\ZZ}{\mbox{$\mathbb Z$}}
+\newcommand{\eopf}{\raisebox{0.8ex}{\framebox{}}}
+\newcommand{\dist}{\hbox{\rm d}}
+\renewcommand\a{\alpha}
+\renewcommand\b{\beta}
+\renewcommand\c{\gamma}
+\renewcommand\d{\delta}
+\newcommand\D{\Delta}
+\newcommand{\directedchi}{\mbox{$\vec{\chi}$}}
+\newcommand{\directedE}{\mbox{$\vec{E}$}}
+\newcommand{\directedG}{\mbox{$\vec{G}$}}
+\newcommand{\directedK}{\mbox{$\vec{K}$}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{function}
+	{\bf Edge classification}\\
+	\underline{{\bf Function} DFS} $()$\\
+	\ForEach{$v$ {\bf in} $V$}{
+		visited[$v$] = $false;$\\
+		pre[$v$] = $null$;\\
+		post[$v$] = $null$;\\
+	}
+	
+	\ForEach{$v$ {\bf in} $V$}{
+		\If{visited[$v$]==$false$}
+		{
+			explore($v$);\\
+		}
+	}
+
+	\hbox{}
+	\underline{{\bf Function} explore} $(z)$\;
+	pre[$z$] = clock ++; \\
+	visited[$z$] = true; \\
+	\ForEach{$(z,w)$ {\bf in} $E$}{
+		\If{visited[$w$]==false}{
+			print: (z,w) is a tree edge\\
+			explore($w$);\\
+		}
+		\ElseIf{pre[z] $<$ pre[w]}
+		{
+			print: (z,w) is a forward edge
+		}
+		\ElseIf{post[w] == null}
+		{
+			print: (z,w) is a back edge
+		}
+		\Else
+		{
+			print: (z,w) is a cross edge
+		}
+	}
+	post[$z$] = clock++;
+\end{function}
+
+\end{document}
